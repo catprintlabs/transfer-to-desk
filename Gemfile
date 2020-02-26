@@ -66,3 +66,5 @@ group :development do
 end
 
 gem 'webpacker'
+gem "sidekiq-cron", "~> 1.1"
+gem 'desk_api', '0.6.0'
