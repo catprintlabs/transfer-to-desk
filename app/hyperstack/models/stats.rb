@@ -9,6 +9,7 @@ class Stats
         else
           Stat.create(stat: stat, value: value)
         end
+        value
       else
         v = Stat.find_by_stat(stat)&.value
         Float(v) rescue v

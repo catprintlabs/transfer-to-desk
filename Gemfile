@@ -63,8 +63,10 @@ gem 'rails-hyperstack',
 
 group :development do
   gem 'foreman'
+  gem 'pry'
 end
 
 gem 'webpacker'
 gem "sidekiq-cron", "~> 1.1"
 gem 'desk_api', '0.6.0'
+gem 'faraday', '< 0.16.0'

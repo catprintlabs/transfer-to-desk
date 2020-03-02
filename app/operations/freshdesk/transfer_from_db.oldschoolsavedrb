@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Freshdesk
-  class TransferDeskCases < Base
+  class TransferFromDB < Base
     UPDATED_BEFORE = '2020-01-18'.to_time.to_i
     CONCURRENCY = 10
     MINUTES_PER_TASK = 3

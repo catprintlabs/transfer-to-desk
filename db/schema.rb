@@ -10,10 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_22_153902) do
+ActiveRecord::Schema.define(version: 2020_02_28_210306) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "customers", force: :cascade do |t|
+    t.integer "desk_id"
+    t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "desk_cases", force: :cascade do |t|
+    t.string "email"
+    t.string "subject"
+    t.text "body"
+    t.integer "desk_id"
+    t.integer "freshdesk_id"
+    t.datetime "case_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "failed"
+  end
+
+  create_table "desk_messages", force: :cascade do |t|
+    t.text "body"
+    t.bigint "desk_case_id"
+    t.string "kind"
+    t.datetime "message_created_at"
+    t.boolean "copied_to_freshdesk", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "from"
+    t.index ["desk_case_id"], name: "index_desk_messages_on_desk_case_id"
+  end
 
   create_table "hyperstack_connections", force: :cascade do |t|
     t.string "channel"
@@ -35,4 +66,5 @@ ActiveRecord::Schema.define(version: 2020_02_22_153902) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "desk_messages", "desk_cases"
 end

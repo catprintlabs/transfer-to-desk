@@ -1,10 +1,12 @@
-if false
-  saved = Sidekiq::Cron::Job.create(
-    name: 'Transfer Desk Cases To Freshdesk',
-    cron: "*/#{Freshdesk::TransferDeskCases::MINUTES_PER_TASK+1} * * * *",
-    # cron: "*/1 * * * *",
-    class: 'Freshdesk::TransferDeskCasesWorker'
-  )
+hash = {
+  'Transfer Desk Cases To DB' => {
+    'class' => Freshdesk::TransferDeskCasesToDB::Worker,
+    'cron'  => '*/1 * * * *'
+  },
+  'Transfer DB Cases To Freshdesk' => {
+    'class' => Freshdesk::TransferDBCasesToFreshdesk::Worker,
+    'cron'  => '*/1 * * * *'
+  }
+}
 
-  puts "CRON JOB RUNNING... #{saved}"
-end
+Sidekiq::Cron::Job.load_from_hash! hash unless ENV['NO_SIDEKIQ']

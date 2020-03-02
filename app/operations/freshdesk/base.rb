@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Freshdesk
+  PRELOAD = [Customer, DeskCase, DeskMessage].freeze # see https://github.com/rails/rails/issues/33209
   class Base < Hyperstack::ServerOp
 
     SAFETY_MARGIN = 0.05
@@ -13,7 +14,7 @@ module Freshdesk
     end
 
     def self.logger
-      @@logger ||= Logger.new(Rails.root.join('log/freshdesk.log'))
+      @logger ||= Logger.new(Rails.root.join('log/freshdesk.log'))
     end
 
     def self.[](*args)
@@ -30,7 +31,7 @@ module Freshdesk
     end
 
     def log_header
-      @@log_header ||=
+      @log_header ||=
         "#{self.class}(#{params.to_h.collect { |k, v| "#{k}: #{v.inspect[0..50]}" }.join(', ')}) "
     end
 
@@ -74,7 +75,7 @@ module Freshdesk
     %i[info error warn].each do |type|
       define_method :"log_#{type}" do |*messages|
         messages.each do |message|
-          Base.logger.send type, "#{Thread.current[:group]} #{log_header} #{message}"
+          self.class.logger.send type, "#{Thread.current[:group].to_s.rjust(2)} #{log_header} #{message}"
         end
       end
     end
@@ -177,6 +178,7 @@ module Freshdesk
     end
 
     def capture_throttle_data(response)
+      puts("Retry-After:  #{response['Retry-After']}")
       @@rate_limit_total = response['X-Ratelimit-Total'].to_i
       remaining = response['X-RateLimit-Remaining'].to_i
       if @@rate_limit_remaining.nil? || remaining > @@rate_limit_remaining + 10
