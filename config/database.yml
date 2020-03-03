@@ -80,6 +80,4 @@ test:
 #
 production:
   <<: *default
-  database: TransferToDesk_production
-  username: TransferToDesk
-  password: <%= ENV['TRANSFERTODESK_DATABASE_PASSWORD'] %>
+  url:      <%= ENV['DATABASE_URL'] %>
