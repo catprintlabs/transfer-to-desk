@@ -2,7 +2,7 @@ class DeskCase < ApplicationRecord
   scope :successful, -> { order(case_created_at: :asc).where('failed IS NULL') }
   scope :failed, -> { order(created_at: :desc).where('failed IS NOT NULL') }
 
-  scope :ready_to_transfer, ->(n) { successful.where('freshdesk_id IS NULL').limit(1).offset(n) }
+  scope :ready_to_transfer, -> { successful.where('freshdesk_id IS NULL') }
 
   scope :completed, -> { order(case_created_at: :asc).where('freshdesk_id IS NOT NULL') }
 
@@ -12,7 +12,7 @@ class DeskCase < ApplicationRecord
   has_many :desk_messages
 
   def self.last_created_at
-    return Time.at(0) unless last
+    return Time.parse('2012-07-16 11:45:44 UTC') unless last
 
     where('case_created_at IS NOT NULL').order(case_created_at: :asc).last.case_created_at
   end

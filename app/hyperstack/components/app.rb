@@ -27,7 +27,7 @@ class App < HyperComponent
       end
       TR do
         TD { 'cases copied to freshdesk' }
-        TD { DeskCase.completed.count.to_s }
+        TD { (DeskCase.completed.count).to_s }
       end
       if DeskCase.count > 1
         TR do

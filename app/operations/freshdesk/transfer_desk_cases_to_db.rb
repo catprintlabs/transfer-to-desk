@@ -10,10 +10,10 @@ module Freshdesk
       end
     end
 
-    CONCURRENCY = 7
+    CONCURRENCY = 25
     MINUTES_PER_TASK = 20
-    # CREATED_BEFORE = '2019-12-02 22:59:11 UTC'.to_time.to_i
-    CREATED_BEFORE = '2012-02-17 14:39:59 UTC'.to_time
+    CREATED_BEFORE = '2019-12-02 22:59:11 UTC'.to_time.to_i
+    # CREATED_BEFORE = '2012-02-20 14:39:59 UTC'.to_time  # was -17
     # CREATED_BEFORE = DeskCase.last.case_created_at + 10.minutes
 
     def self.logger
@@ -124,7 +124,7 @@ module Freshdesk
     end
 
     def check_if_transfer_complete
-      return if @valid_case_found
+      return if @valid_case_found || Runner.end_at <= Time.now
 
       log_info 'no valid cases found - transfer is complete!'
       Stats.state = Runner.complete = 'transfer complete'
@@ -210,10 +210,10 @@ module Freshdesk
 
     def add_messages_to_db(desk_case, kase)
       add_messages(desk_case, kase.notes.entries, kind: :note) do |entry|
-        entry.try(:user).try(:email)
+        entry.user.email rescue 'agent has been deleted'
       end
       add_messages(desk_case, kase.replies.entries, kind: :reply) do |entry|
-        entry.try(:from)
+        entry.from rescue 'could not find email of sender'
       end
     end
 

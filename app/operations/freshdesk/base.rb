@@ -178,7 +178,6 @@ module Freshdesk
     end
 
     def capture_throttle_data(response)
-      puts("Retry-After:  #{response['Retry-After']}")
       @@rate_limit_total = response['X-Ratelimit-Total'].to_i
       remaining = response['X-RateLimit-Remaining'].to_i
       if @@rate_limit_remaining.nil? || remaining > @@rate_limit_remaining + 10
@@ -205,9 +204,8 @@ module Freshdesk
       end
       return response if %w[200 201].include? response.code
 
-      log_warn "#{request} #{request.uri} #{request.body} "\
+      raise "#{request} #{request.uri} #{request.body} "\
                "failed with #{response.code} - #{response.body}"
-      abort!
     end
 
     def freshdesk_send(request)

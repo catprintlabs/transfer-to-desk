@@ -12,7 +12,7 @@ module Freshdesk
     end
 
     CONCURRENCY = 5
-    MINUTES_PER_TASK = 1
+    MINUTES_PER_TASK = 20
 
     class << self
       attr_accessor :end_at
@@ -36,7 +36,7 @@ module Freshdesk
 
       def initialize
         TransferDBCasesToFreshdesk.logger.info "attempt to initialize runner, #{Runner.heartbeat}"
-        return if Runner.heartbeat && Time.now < Runner.heartbeat + 2.minutes
+        return if Runner.heartbeat && Time.now < Runner.heartbeat + 5.minutes
 
         begin
           TransferDBCasesToFreshdesk.logger.info "NO OTHER RUNNERS RUNNING"
@@ -44,9 +44,9 @@ module Freshdesk
           Runner.end_at = Time.now + MINUTES_PER_TASK.minutes
           Stats.tofreshdesk_state = "running until #{Runner.end_at}"
 
-          while Runner.end_at > Time.now && DeskCase.ready_to_transfer(0).first
+          while Runner.end_at > Time.now && DeskCase.ready_to_transfer.count.positive?
             beat!
-            TransferDBCasesToFreshdesk.run
+            TransferDBCasesToFreshdesk.run(heartbeat: @heartbeat)
           end
           TransferDBCasesToFreshdesk.logger.info "DONE RUNNING..."
         ensure
@@ -55,6 +55,8 @@ module Freshdesk
       end
     end
 
+    param :heartbeat
+
     step :init
     step :copy_cases_to_freshdesk
     step :complete
@@ -62,10 +64,12 @@ module Freshdesk
     failed :log_failure
 
     def copy_cases_to_freshdesk
+      cases = DeskCase.ready_to_transfer.limit(CONCURRENCY)
       CONCURRENCY.times.map do |group|
+
         Thread.new do
           Thread.current[:group] = group
-          copy_case_to_freshdesk(DeskCase.ready_to_transfer(group).first)
+          copy_case_to_freshdesk(cases[group])
         end
       end.each(&:join)
     end
@@ -83,7 +87,7 @@ module Freshdesk
         return abort_copy(kase, e) if retries.zero?
 
         log_warn "case #{kase.desk_id} encountered error - will retry: #{e}"
-        Stats.tofreshdesk_warnings += 1
+        retries -= 1
         sleep 5.seconds
         retry
       end
@@ -122,7 +126,7 @@ module Freshdesk
     def ticket_hash_for(kase)
       {
         email:        kase.email,
-        subject:      kase.subject,
+        subject:      "#{kase.subject} - Original Desk Case #{kase.desk_id}",
         status:       5,
         priority:     1, # this is required!
         responder_id: nil,
