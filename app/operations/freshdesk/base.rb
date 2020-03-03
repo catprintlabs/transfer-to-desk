@@ -4,7 +4,7 @@ module Freshdesk
   PRELOAD = [Customer, DeskCase, DeskMessage].freeze # see https://github.com/rails/rails/issues/33209
   class Base < Hyperstack::ServerOp
 
-    SAFETY_MARGIN = 0.05
+    SAFETY_MARGIN = 10.0
 
     require 'net/http'
     require 'uri'
@@ -158,6 +158,9 @@ module Freshdesk
       end
     end
 
+    10/10
+    10/9
+
     def compute_throttle_time_wo_log
       if @@rate_limit_total.nil?
         throttle_time = 2 # if we use a non-blocking sleep then this should be something like the group number
@@ -169,8 +172,12 @@ module Freshdesk
         actual_seconds_per_request =
           transmissions.positive? ? elapsed_cycle_time / transmissions : 0
 
-        target_elapsed_seconds = transmissions * 60 / (@@rate_limit_total * (1 - SAFETY_MARGIN))
-        brakes = (@@rate_limit_total * SAFETY_MARGIN) / @@rate_limit_remaining
+        target_elapsed_seconds = transmissions * 60.0 / (@@rate_limit_total - SAFETY_MARGIN)
+        if @@rate_limit_remaining < SAFETY_MARGIN / 2.0
+          brakes = 20
+        else
+          brakes = SAFETY_MARGIN.to_f / @@rate_limit_remaining
+        end
         throttle_time = [target_elapsed_seconds - elapsed_cycle_time, 0].max + brakes
         log_info("will throttle for #{throttle_time} target: #{target_elapsed_seconds} actual: #{elapsed_cycle_time} brakes: #{brakes}")
       end

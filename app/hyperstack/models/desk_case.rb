@@ -12,7 +12,7 @@ class DeskCase < ApplicationRecord
   has_many :desk_messages
 
   def self.last_created_at
-    return Time.parse('2012-07-16 11:45:44 UTC') unless last
+    return Time.parse('2012-07-19 18:06:42 UTC') unless last
 
     where('case_created_at IS NOT NULL').order(case_created_at: :asc).last.case_created_at
   end
