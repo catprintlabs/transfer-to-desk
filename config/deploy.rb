@@ -37,5 +37,6 @@ namespace :deploy do
 end
 
 before 'deploy:assets:precompile', 'deploy:yarn_install'
+after 'deploy:assets:precompile', 'deploy:yarn_install'
 after 'deploy:reverted', 'deploy:restart_app'
 after 'deploy:published', 'deploy:restart_app'
