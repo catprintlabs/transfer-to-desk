@@ -4,18 +4,13 @@ Hyperstack.import 'hyperstack/hotloader', client_only: true if Rails.env.develop
 
 Hyperstack.component_base_class = 'HyperComponent' # i.e. 'ApplicationComponent'
 
-# prerendering is default :off, you should wait until your
-# application is relatively well debugged before turning on.
-
-Hyperstack.prerendering = :off # or :on
-
-# transport controls how push (websocket) communications are
-# implemented.  The default is :action_cable.
-# Other possibilities are :pusher (see www.pusher.com) or
-# :simple_poller which is sometimes handy during system debug.
-
-Hyperstack.transport = :simple_poller # :action_cable # or :none, :pusher,  :simple_poller
-Hyperstack.seconds_between_poll = 60
+Hyperstack.configuration do |config|
+  config.prerendering = :off # or :on
+  config.transport = :simple_poller # :action_cable # or :none, :pusher,  :simple_poller
+  config.opts = {
+    seconds_between_poll: 60
+  }
+end
 
 # add this line if you need jQuery AND ARE NOT USING WEBPACK
 # Hyperstack.import 'hyperstack/component/jquery', client_only: true
