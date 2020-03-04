@@ -19,6 +19,16 @@ set :rbenv_map_bins, %w[rake gem bundle ruby rails puma pumactl sidekiqctl]
 set :rbenv_roles, :all # default value
 
 namespace :deploy do
+  desc 'Run rake yarn:install'
+  task :yarn_install do
+    on roles(:web) do
+      within release_path do
+        execute("cd #{release_path} && yarn install --check-files")
+      end
+    end
+  end
+
+  desc 'Restart web/worker applications'
   task :restart_app do
     on roles(:app) do
       execute(:sudo, 'restart-app', '-e', fetch(:stage), fetch(:application))
@@ -26,5 +36,6 @@ namespace :deploy do
   end
 end
 
+before 'deploy:assets:precompile', 'deploy:yarn_install'
 after 'deploy:reverted', 'deploy:restart_app'
 after 'deploy:published', 'deploy:restart_app'
