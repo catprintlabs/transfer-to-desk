@@ -7,7 +7,7 @@ set :repo_url, 'git@github.com:catprintlabs/transfer-to-desk.git'
 set :stages, %w[production]
 set :keep_releases, 4
 
-append :linked_files, 'config/master.key', '.env'
+append :linked_files, 'config/master.key', '.env.production'
 append :linked_dirs, 'log', 'tmp'
 
 # rbenv
