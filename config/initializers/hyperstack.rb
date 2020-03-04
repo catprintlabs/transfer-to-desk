@@ -6,10 +6,10 @@ Hyperstack.component_base_class = 'HyperComponent' # i.e. 'ApplicationComponent'
 
 Hyperstack.configuration do |config|
   config.prerendering = :off # or :on
-  config.transport = :simple_poller # :action_cable # or :none, :pusher,  :simple_poller
-  config.opts = {
-    seconds_between_poll: 60
-  }
+  config.transport = :action_cable # :action_cable # or :none, :pusher,  :simple_poller
+  # config.opts = {
+  #   seconds_between_poll: 60
+  # }
 end
 
 # add this line if you need jQuery AND ARE NOT USING WEBPACK
