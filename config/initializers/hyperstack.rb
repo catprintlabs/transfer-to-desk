@@ -14,7 +14,8 @@ Hyperstack.prerendering = :off # or :on
 # Other possibilities are :pusher (see www.pusher.com) or
 # :simple_poller which is sometimes handy during system debug.
 
-Hyperstack.transport = :action_cable # or :none, :pusher,  :simple_poller
+Hyperstack.transport = :simple_poller # :action_cable # or :none, :pusher,  :simple_poller
+Hyperstack.seconds_between_poll = 60
 
 # add this line if you need jQuery AND ARE NOT USING WEBPACK
 # Hyperstack.import 'hyperstack/component/jquery', client_only: true
