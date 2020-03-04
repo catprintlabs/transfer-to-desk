@@ -25,3 +25,6 @@ namespace :deploy do
     end
   end
 end
+
+after 'deploy:reverted', 'deploy:restart_app'
+after 'deploy:published', 'deploy:restart_app'
