@@ -28,3 +28,9 @@ module Hyperstack
     )
   end
 end if Rails.env.development?
+
+module Hyperstack
+  def self.on_server?
+    true
+  end
+end
