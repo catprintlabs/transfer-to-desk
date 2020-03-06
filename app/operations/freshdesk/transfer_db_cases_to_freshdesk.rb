@@ -126,13 +126,19 @@ module Freshdesk
     def ticket_hash_for(kase)
       {
         email:        kase.email,
-        subject:      "#{kase.subject} - Original Desk Case #{kase.desk_id}",
+        subject:      truncated_subject(kase),
         status:       5,
         priority:     1, # this is required!
         responder_id: nil,
         description:  format_body(:original, kase.email, kase.case_created_at, kase.body),
         tags:         ['COPIED-FROM-DESK-2']
       }
+    end
+
+    def truncated_subject(kase)
+      info = " - Original Desk Case #{kase.desk_id}"
+
+      "#{kase.subject.first(255 - info.length)}#{info}"
     end
 
     #alias freshdesk_send freshdesk_send_wo_log

@@ -71,7 +71,7 @@ class App < HyperComponent
         TR do
           TD(colspan: 2) { 'last 10 failures'}
         end
-        DeskCase.failed.last(10).each do |failure|
+        DeskCase.failed.first(10).each do |failure|
           TR do
             TD { failure.desk_id.to_s }
             TD { failure.failed }

@@ -1,6 +1,6 @@
 class DeskCase < ApplicationRecord
   scope :successful, -> { order(case_created_at: :asc).where('failed IS NULL') }
-  scope :failed, -> { order(created_at: :desc).where('failed IS NOT NULL') }
+  scope :failed, -> { order(updated_at: :desc).where('failed IS NOT NULL') }
 
   scope :ready_to_transfer, -> { successful.where('freshdesk_id IS NULL') }
 
