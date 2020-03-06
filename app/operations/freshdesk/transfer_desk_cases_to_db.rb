@@ -33,7 +33,7 @@ module Freshdesk
 
       def initialize
         TransferDeskCasesToDB.logger.info "attempt to initialize runner, #{Runner.heartbeat}"
-        return if Runner.heartbeat && Time.now < Runner.heartbeat + 2.minutes
+        return if Runner.heartbeat && Time.now < Runner.heartbeat + 4.minutes
         return if Runner.complete
 
         begin
@@ -124,7 +124,7 @@ module Freshdesk
     end
 
     def check_if_transfer_complete
-      return if @valid_case_found || Runner.end_at <= Time.now
+      return if @valid_case_found || Runner.end_at <= Time.now || params.heartbeat != Runner.heartbeat
 
       log_info 'no valid cases found - transfer is complete!'
       Stats.state = Runner.complete = 'transfer complete'
