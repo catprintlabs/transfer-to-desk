@@ -7,10 +7,10 @@ Sidekiq.configure_client do |config|
 end
 
 hash = {
-  'Transfer Desk Cases To DB' => {
-    'class' => Freshdesk::TransferDeskCasesToDB::Worker,
-    'cron'  => '*/1 * * * *'
-  },
+  # 'Transfer Desk Cases To DB' => {
+  #   'class' => Freshdesk::TransferDeskCasesToDB::Worker,
+  #   'cron'  => '*/1 * * * *'
+  # },
   'Transfer DB Cases To Freshdesk' => {
     'class' => Freshdesk::TransferDBCasesToFreshdesk::Worker,
     'cron'  => '*/1 * * * *'

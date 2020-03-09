@@ -12,7 +12,7 @@ module Freshdesk
 
     CONCURRENCY = 25
     MINUTES_PER_TASK = 20
-    CREATED_BEFORE = '2019-12-02 22:59:11 UTC'.to_time.to_i
+    CREATED_BEFORE = '2019-12-02 22:59:11 UTC'.to_time
     # CREATED_BEFORE = '2012-02-20 14:39:59 UTC'.to_time  # was -17
     # CREATED_BEFORE = DeskCase.last.case_created_at + 10.minutes
 
@@ -32,6 +32,7 @@ module Freshdesk
       end
 
       def initialize
+        return true # we're done!
         TransferDeskCasesToDB.logger.info "attempt to initialize runner, #{Runner.heartbeat}"
         return if Runner.heartbeat && Time.now < Runner.heartbeat + 4.minutes
         return if Runner.complete

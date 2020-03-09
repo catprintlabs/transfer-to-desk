@@ -55,6 +55,10 @@ class App < HyperComponent
             TD { 'estimated days to complete transfer' }
             TD { days_to_complete_transfer.to_s }
           end
+          TR do
+            TD { 'estimated complete date' }
+            TD { Time.now + days_to_complete_transfer.days }
+          end
         end
       end
       Stat.each do |stat|
